@@ -11,9 +11,10 @@ class GooseModel(nn.Module):
                             num_layers=self.num_layer,
                             batch_first=True)
 
-        self.embedding = nn.Embedding(num_embeddings=3, embedding_dim=256)
+        self.embedding = nn.Embedding(num_embeddings=8, embedding_dim=256)
         self.conv = nn.Conv1d(1, 256)
-        self.fc = nn.Linear(256, 2)
+        self.convy = nn.Conv1d(256, 256)
+        self.fc = nn.Linear(256, 8)
 
     def shift_label(self, y):
         b, l, dim = y.shape
@@ -22,13 +23,21 @@ class GooseModel(nn.Module):
         return y[b,:-1, :]
 
     def forward(self, x, y):
-        y = torch.sum(y, dim=-1)
-        # x [b, 5], y [b,5,4]-> dim
+        # x [b, 5, 1], y [b,5,1]-> b 5 dim
         y = self.shift_label(y)
-        y = self.embedding(y) # b 5 4 dim
+        y = self.embedding(y) # b 5 dim
         x = self.conv(x)  # b 5 dim
-        x = self.lstm(X)
+        y = self.convy(y)
         x = x+y
+        x = self.lstm(X)
+        x = self.fc(x)
+        return x
+
+
+    def computer_loss(self, x, y):
+        y = torch.sum(y, dim=-1, keepdim=True)
+        x = self.forward(x, y)
+
 
 
 if __name__ == '__main__':
