@@ -1,0 +1,22 @@
+#CSL-Daily
+# dataset: phoenix14-si5
+num_epoch: 40
+batch_size: 4
+random_seed: 0 
+test_batch_size: 4
+log_interval: 10000
+eval_interval: 1
+save_interval: 5
+
+optimizer_args:
+  optimizer: Adam
+  base_lr: 0.0001
+#  base_lr: 0.0001
+#  step: [20, 35]
+  step: [20, 30, 35]
+  learning_ratio: 1
+  weight_decay: 0.0001
+  start_epoch: 0
+  nesterov: False
+
+
